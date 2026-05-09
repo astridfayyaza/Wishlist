@@ -1,5 +1,6 @@
 package com.astrid0049.wishlist.ui.wishlist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,9 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Card
@@ -30,6 +37,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,6 +64,7 @@ fun WishlistScreen(
 ) {
     val places by viewModel.places.collectAsState(initial = emptyList())
     val sortOrder by viewModel.sortOrder.collectAsState(initial = "pining")
+    val viewMode by viewModel.viewMode.collectAsState(initial = "list")
 
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -72,12 +81,12 @@ fun WishlistScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            viewModel.toggleSort(sortOrder)
+                            viewModel.toggleView(viewMode)
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = "Toggle sort"
+                            imageVector = if (viewMode == "list") Icons.Default.GridView else Icons.AutoMirrored.Filled.List,
+                            contentDescription = if (viewMode == "list") "Switch to grid view" else "Switch to list view"
                         )
                     }
 
@@ -142,25 +151,37 @@ fun WishlistScreen(
                     .fillMaxSize()
             )
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(places) { place ->
-                    PlaceCard(
-                        place = place,
-                        onClick = {
-                            navController.navigate(Screen.PlaceEdit.withId(place.id))
-                        }
-                    )
-                }
+            if (viewMode == "list") {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(places) { place ->
+                        PlaceCard(
+                            place = place,
+                            onClick = {
+                                navController.navigate(Screen.PlaceEdit.withId(place.id))
+                            }
+                        )
+                    }
 
-                item {
-                    Spacer(modifier = Modifier.height(80.dp))
+                    item {
+                        Spacer(modifier = Modifier.height(80.dp))
+                    }
                 }
+            } else {
+                WishlistGrid(
+                    places = places,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    onPlaceClick = { place ->
+                        navController.navigate(Screen.PlaceEdit.withId(place.id))
+                    }
+                )
             }
         }
     }
@@ -260,6 +281,91 @@ private fun PlaceCard(
                     style = MaterialTheme.typography.labelSmall
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun WishlistGrid(
+    places: List<Place>,
+    modifier: Modifier = Modifier,
+    onPlaceClick: (Place) -> Unit
+) {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalItemSpacing = 8.dp
+    ) {
+        items(places) { place ->
+            GridPlaceCard(
+                place = place,
+                onClick = {
+                    onPlaceClick(place)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun GridPlaceCard(
+    place: Place,
+    onClick: () -> Unit
+) {
+    val days = pineDays(place)
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = "${days}d",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelMedium
+            )
+
+            Text(
+                text = place.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            if (!place.location.isNullOrBlank()) {
+                Text(
+                    text = place.location,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1
+                )
+            }
+
+            Text(
+                text = place.category,
+                style = MaterialTheme.typography.labelSmall
+            )
+
+            if (!place.notes.isNullOrBlank()) {
+                Text(
+                    text = place.notes,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2
+                )
+            }
+
+            Text(
+                text = pineLabel(days),
+                style = MaterialTheme.typography.labelSmall
+            )
         }
     }
 }
