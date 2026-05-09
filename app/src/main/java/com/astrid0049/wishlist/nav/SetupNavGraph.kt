@@ -50,7 +50,10 @@ fun SetupNavGraph(
         }
 
         composable(route = Screen.Visited.route) {
-            VisitedScreen(navController)
+            VisitedScreen(
+                navController = navController,
+                snackbarHostState = snackbarHostState
+            )
         }
 
         composable(route = Screen.About.route) {

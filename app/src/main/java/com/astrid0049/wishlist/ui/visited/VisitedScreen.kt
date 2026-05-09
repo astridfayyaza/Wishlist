@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,14 +44,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.astrid0049.wishlist.data.Place
 import com.astrid0049.wishlist.util.relativeDate
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VisitedScreen(
     navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
     viewModel: VisitedViewModel = viewModel(factory = VisitedViewModel.Factory)
 ) {
     val places by viewModel.visitedPlaces.collectAsState(initial = emptyList())
+    val coroutineScope = rememberCoroutineScope()
 
     var placeToDelete by remember { mutableStateOf<Place?>(null) }
 
@@ -106,6 +111,12 @@ fun VisitedScreen(
                         place = place,
                         onRestore = {
                             viewModel.restorePlace(place.id)
+
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    "'${place.name}' is back on the wishlist."
+                                )
+                            }
                         },
                         onDelete = {
                             placeToDelete = place
@@ -136,6 +147,12 @@ fun VisitedScreen(
                     onClick = {
                         placeToDelete?.let { place ->
                             viewModel.deletePlace(place)
+
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    "'${place.name}' deleted."
+                                )
+                            }
                         }
                         placeToDelete = null
                     }
