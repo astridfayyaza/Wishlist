@@ -64,7 +64,7 @@ fun WishlistScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Wishlist",
+                        text = "Itsuka",
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Bold
                     )

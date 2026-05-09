@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.astrid0049.wishlist.ui.about.AboutScreen
 import com.astrid0049.wishlist.ui.detail.PlaceDetailScreen
 import com.astrid0049.wishlist.ui.visited.VisitedScreen
 import com.astrid0049.wishlist.ui.wishlist.WishlistScreen
-import com.example.itsuka.ui.about.AboutScreen
 
 @Composable
 fun SetupNavGraph(
