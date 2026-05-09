@@ -138,6 +138,14 @@ class PlaceDetailViewModel(
         }
     }
 
+    fun undoVisit() {
+        val placeId = id ?: return
+
+        viewModelScope.launch {
+            repository.unvisit(placeId)
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

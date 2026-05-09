@@ -41,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +50,7 @@ fun PlaceDetailScreen(
     navController: NavHostController,
     id: Int? = null,
     snackbarHostState: SnackbarHostState,
+    snackbarScope: CoroutineScope,
     viewModel: PlaceDetailViewModel = viewModel(factory = PlaceDetailViewModel.Factory)
 ){
     val context = LocalContext.current
@@ -74,7 +77,16 @@ fun PlaceDetailScreen(
         if (isSaved) {
             navController.popBackStack()
 
-            snackbarHostState.showSnackbar(actionMessage)
+            snackbarScope.launch {
+                val result = snackbarHostState.showSnackbar(
+                    message = actionMessage,
+                    actionLabel = if (actionMessage.contains("visited")) "UNDO" else null
+                )
+
+                if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                    viewModel.undoVisit()
+                }
+            }
         }
     }
 

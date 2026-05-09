@@ -12,11 +12,13 @@ import com.astrid0049.wishlist.ui.about.AboutScreen
 import com.astrid0049.wishlist.ui.detail.PlaceDetailScreen
 import com.astrid0049.wishlist.ui.visited.VisitedScreen
 import com.astrid0049.wishlist.ui.wishlist.WishlistScreen
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun SetupNavGraph(
     navController: NavHostController = rememberNavController(),
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    snackbarScope: CoroutineScope
 ) {
     NavHost(
         navController = navController,
@@ -29,7 +31,8 @@ fun SetupNavGraph(
         composable(route = Screen.PlaceAdd.route) {
             PlaceDetailScreen(
                 navController = navController,
-                snackbarHostState = snackbarHostState
+                snackbarHostState = snackbarHostState,
+                snackbarScope = snackbarScope
             )
         }
 
@@ -45,7 +48,8 @@ fun SetupNavGraph(
             PlaceDetailScreen(
                 navController = navController,
                 id = id,
-                snackbarHostState = snackbarHostState
+                snackbarHostState = snackbarHostState,
+                snackbarScope = snackbarScope
             )
         }
 
