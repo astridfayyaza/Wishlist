@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
@@ -25,6 +24,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,15 +47,16 @@ import androidx.navigation.NavHostController
 fun PlaceDetailScreen(
     navController: NavHostController,
     id: Int? = null,
+    snackbarHostState: SnackbarHostState,
     viewModel: PlaceDetailViewModel = viewModel(factory = PlaceDetailViewModel.Factory)
-) {
+){
     val context = LocalContext.current
-
     val name by viewModel.name.collectAsState()
     val location by viewModel.location.collectAsState()
     val category by viewModel.category.collectAsState()
     val notes by viewModel.notes.collectAsState()
     val isSaved by viewModel.isSaved.collectAsState()
+    val actionMessage by viewModel.actionMessage.collectAsState()
 
     var menuExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
@@ -72,6 +73,8 @@ fun PlaceDetailScreen(
     LaunchedEffect(isSaved) {
         if (isSaved) {
             navController.popBackStack()
+
+            snackbarHostState.showSnackbar(actionMessage)
         }
     }
 

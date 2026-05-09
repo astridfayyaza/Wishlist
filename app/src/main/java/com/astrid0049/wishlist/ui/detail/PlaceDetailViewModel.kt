@@ -42,6 +42,8 @@ class PlaceDetailViewModel(
     val notes: StateFlow<String> = _notes
 
     private val _isSaved = MutableStateFlow(false)
+    private val _actionMessage = MutableStateFlow("")
+    val actionMessage: StateFlow<String> = _actionMessage
     val isSaved: StateFlow<Boolean> = _isSaved
 
     init {
@@ -104,6 +106,12 @@ class PlaceDetailViewModel(
                 )
             }
 
+            _actionMessage.value = if (isEditMode) {
+                "Saved. ✦"
+            } else {
+                "'${_name.value.trim()}' pinned. ✦"
+            }
+
             _isSaved.value = true
         }
     }
@@ -113,6 +121,8 @@ class PlaceDetailViewModel(
 
         viewModelScope.launch {
             repository.visit(placeId)
+
+            _actionMessage.value = "'${_name.value.trim()}' visited. ✨"
             _isSaved.value = true
         }
     }
@@ -122,6 +132,8 @@ class PlaceDetailViewModel(
 
         viewModelScope.launch {
             repository.hardDelete(place)
+
+            _actionMessage.value = "'${place.name}' deleted."
             _isSaved.value = true
         }
     }
