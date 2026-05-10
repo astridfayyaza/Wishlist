@@ -26,6 +26,9 @@ interface PlaceDao {
     @Query("SELECT * FROM places WHERE id = :id")
     fun getById(id: Int): Flow<Place?>
 
+    @Query("SELECT COUNT(*) FROM places")
+    suspend fun countAllPlaces(): Int
+
     @Insert
     suspend fun insert(place: Place): Long
 
