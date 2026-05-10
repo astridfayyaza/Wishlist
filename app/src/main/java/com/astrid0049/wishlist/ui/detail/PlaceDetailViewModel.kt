@@ -137,6 +137,11 @@ class PlaceDetailViewModel(
         }
     }
 
+    fun consumeSaveEvent() {
+        _isSaved.value = false
+        _actionMessage.value = ""
+    }
+
     suspend fun undoVisit() {
         val placeId = id ?: return
         repository.unvisit(placeId)

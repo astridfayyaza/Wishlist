@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Itsuka</string>
+    <string name="app_name">Wishlist</string>
 
     <!-- Wishlist -->
-    <string name="wishlist_title">Itsuka</string>
+    <string name="wishlist_title">Wishlist</string>
     <string name="pin_a_place">Pin a place</string>
     <string name="wishlist_empty_primary">No dreams yet.</string>
     <string name="wishlist_empty_secondary">Where do you want to go first?</string>
@@ -49,7 +49,7 @@
     <string name="about_title">About</string>
     <string name="about_app_name" translatable="false">いつか</string>
     <string name="about_divider" translatable="false">✦ ⋆ ✧</string>
-    <string name="about_body">Itsuka means someday — the place where every dream we postpone keeps waiting.\n\nThis is our list of someday places.</string>
+    <string name="about_body">Itsuka means someday — the place where every dream we postpone keeps waiting.</string>
     <string name="about_subtitle">A wishlist for places we want to visit together.</string>
 
     <!-- Snackbar -->

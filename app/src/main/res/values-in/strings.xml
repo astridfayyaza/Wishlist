@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Itsuka</string>
+    <string name="app_name">Wishlist</string>
 
     <!-- Wishlist -->
-    <string name="wishlist_title">Itsuka</string>
+    <string name="wishlist_title">Wishlist</string>
     <string name="pin_a_place">Sematkan tempat</string>
     <string name="wishlist_empty_primary">Belum ada impian.</string>
     <string name="wishlist_empty_secondary">Mau ke mana dulu?</string>
@@ -47,7 +47,7 @@
 
     <!-- About -->
     <string name="about_title">Tentang</string>
-    <string name="about_body">Itsuka berarti suatu hari nanti — tempat di mana setiap impian yang kita tunda tetap menunggu.\n\nIni daftar tempat suatu hari nanti milik kita.</string>
+    <string name="about_body">Itsuka berarti suatu hari nanti — tempat di mana setiap impian yang kita tunda tetap menunggu.</string>
     <string name="about_subtitle">Wishlist tempat yang ingin kita kunjungi bersama.</string>
 
     <!-- Snackbar -->
@@ -56,7 +56,7 @@
     <string name="snackbar_visited">\'%1$s\' dikunjungi. ✨</string>
     <string name="snackbar_restored">\'%1$s\' kembali ke daftar.</string>
     <string name="snackbar_deleted">\'%1$s\' dihapus.</string>
-    <string name="undo">URUNG</string>
+    <string name="undo">UNDO</string>
 
     <!-- Pining labels -->
     <string name="pine_days">%1$dh</string>

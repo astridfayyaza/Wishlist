@@ -2,10 +2,12 @@ package com.astrid0049.wishlist.ui.detail
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -23,13 +25,14 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,8 +40,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -74,19 +79,23 @@ fun PlaceDetailScreen(
 
     LaunchedEffect(isSaved) {
         if (isSaved) {
+            val message = when (actionMessage) {
+                "saved" -> savedMsg
+                "pinned" -> pinnedMsg
+                "visited" -> visitedMsg
+                "deleted" -> deletedMsg
+                else -> actionMessage
+            }
+            val isVisitedAction = actionMessage == "visited"
+
             navController.popBackStack()
+            viewModel.consumeSaveEvent()
 
             snackbarScope.launch {
-                val message = when (actionMessage) {
-                    "saved" -> savedMsg
-                    "pinned" -> pinnedMsg
-                    "visited" -> visitedMsg
-                    "deleted" -> deletedMsg
-                    else -> actionMessage
-                }
                 val result = snackbarHostState.showSnackbar(
                     message = message,
-                    actionLabel = if (actionMessage == "visited") undoMsg else null
+                    actionLabel = if (isVisitedAction) undoMsg else null,
+                    duration = SnackbarDuration.Short
                 )
 
                 if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
@@ -152,7 +161,7 @@ fun PlaceDetailScreenContent(
 
     Scaffold(
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 title = {
                     Text(
                         text = if (isEditMode) stringResource(R.string.place_edit_title) else stringResource(R.string.place_add_title),
@@ -233,8 +242,16 @@ fun PlaceDetailScreenContent(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                painter = painterResource(R.drawable.kuromi_happy),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(120.dp)
+            )
+
             OutlinedTextField(
                 value = name,
                 onValueChange = onNameChange,
@@ -348,7 +365,17 @@ fun PlaceDetailScreenContent(
                 Text(stringResource(R.string.delete_place_title, name))
             },
             text = {
-                Text(stringResource(R.string.delete_place_body))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.kuromi_cry),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(120.dp)
+                    )
+                    Text(stringResource(R.string.delete_place_body))
+                }
             },
             confirmButton = {
                 TextButton(
