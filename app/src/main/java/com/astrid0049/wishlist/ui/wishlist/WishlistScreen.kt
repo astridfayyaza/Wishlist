@@ -1,5 +1,6 @@
 package com.astrid0049.wishlist.ui.wishlist
 
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,15 +44,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.compose.ui.res.stringResource
 import com.astrid0049.wishlist.R
 import com.astrid0049.wishlist.data.Place
 import com.astrid0049.wishlist.nav.Screen
+import com.astrid0049.wishlist.ui.theme.WishlistTheme
 import com.astrid0049.wishlist.util.getCategoryLabelRes
 import com.astrid0049.wishlist.util.pineDays
 import com.astrid0049.wishlist.util.pineLabelRes
@@ -65,6 +68,28 @@ fun WishlistScreen(
     val places by viewModel.places.collectAsState(initial = emptyList())
     val viewMode by viewModel.viewMode.collectAsState(initial = "list")
 
+    WishlistScreenContent(
+        places = places,
+        viewMode = viewMode,
+        onToggleView = { viewModel.toggleView(viewMode) },
+        onAddClick = { navController.navigate(Screen.PlaceAdd.route) },
+        onPlaceClick = { place -> navController.navigate(Screen.PlaceEdit.withId(place.id)) },
+        onVisitedClick = { navController.navigate(Screen.Visited.route) },
+        onAboutClick = { navController.navigate(Screen.About.route) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WishlistScreenContent(
+    places: List<Place>,
+    viewMode: String,
+    onToggleView: () -> Unit,
+    onAddClick: () -> Unit,
+    onPlaceClick: (Place) -> Unit,
+    onVisitedClick: () -> Unit,
+    onAboutClick: () -> Unit,
+) {
     var menuExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -79,9 +104,7 @@ fun WishlistScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = {
-                            viewModel.toggleView(viewMode)
-                        }
+                        onClick = onToggleView
                     ) {
                         Icon(
                             imageVector = if (viewMode == "list") Icons.Default.GridView else Icons.AutoMirrored.Filled.List,
@@ -110,7 +133,7 @@ fun WishlistScreen(
                             text = { Text(stringResource(R.string.menu_visited)) },
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate(Screen.Visited.route)
+                                onVisitedClick()
                             }
                         )
 
@@ -118,7 +141,7 @@ fun WishlistScreen(
                             text = { Text(stringResource(R.string.menu_about)) },
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate(Screen.About.route)
+                                onAboutClick()
                             }
                         )
                     }
@@ -127,9 +150,7 @@ fun WishlistScreen(
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = {
-                    navController.navigate(Screen.PlaceAdd.route)
-                },
+                onClick = onAddClick,
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -162,7 +183,7 @@ fun WishlistScreen(
                         PlaceCard(
                             place = place,
                             onClick = {
-                                navController.navigate(Screen.PlaceEdit.withId(place.id))
+                                onPlaceClick(place)
                             }
                         )
                     }
@@ -178,7 +199,7 @@ fun WishlistScreen(
                         .padding(innerPadding)
                         .fillMaxSize(),
                     onPlaceClick = { place ->
-                        navController.navigate(Screen.PlaceEdit.withId(place.id))
+                        onPlaceClick(place)
                     }
                 )
             }
@@ -226,7 +247,7 @@ private fun PlaceCard(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
         Row(
@@ -325,7 +346,7 @@ private fun GridPlaceCard(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
         Column(
@@ -370,5 +391,40 @@ private fun GridPlaceCard(
                 style = MaterialTheme.typography.labelSmall
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Composable
+fun WishlistScreenPreview() {
+    WishlistTheme {
+        WishlistScreenContent(
+            places = listOf(
+                Place(
+                    id = 1,
+                    name = "Mount Fuji",
+                    location = "Japan",
+                    category = "Nature",
+                    notes = "Must see in winter",
+                    dateAdded = System.currentTimeMillis(),
+                    lastUpdated = System.currentTimeMillis()
+                ),
+                Place(
+                    id = 2,
+                    name = "Colosseum",
+                    location = "Rome, Italy",
+                    category = "Culture",
+                    dateAdded = System.currentTimeMillis() - 86400000 * 5,
+                    lastUpdated = System.currentTimeMillis()
+                )
+            ),
+            viewMode = "list",
+            onToggleView = {},
+            onAddClick = {},
+            onPlaceClick = {},
+            onVisitedClick = {},
+            onAboutClick = {}
+        )
     }
 }

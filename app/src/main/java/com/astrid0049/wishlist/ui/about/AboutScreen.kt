@@ -1,9 +1,12 @@
 package com.astrid0049.wishlist.ui.about
 
+import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -13,20 +16,24 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.astrid0049.wishlist.R
+import com.astrid0049.wishlist.ui.theme.WishlistTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +42,7 @@ fun AboutScreen(
 ) {
     Scaffold(
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 title = {
                     Text(
                         text = stringResource(R.string.about_title),
@@ -74,6 +81,13 @@ fun AboutScreen(
                 color = MaterialTheme.colorScheme.primary
             )
 
+            Image(
+                painter = painterResource(R.drawable.kuromi_love),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(120.dp)
+            )
+
             Text(
                 text = stringResource(R.string.about_divider),
                 style = MaterialTheme.typography.headlineSmall,
@@ -99,6 +113,28 @@ fun AboutScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 24.dp)
             )
+
+            Text(
+                text = "♡ Astrid F. D. ♡",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 24.dp)
+            )
+            Text(
+                text = "2026",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 24.dp)
+            )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Composable
+fun AboutScreenPreview() {
+    WishlistTheme {
+        AboutScreen(navController = rememberNavController())
     }
 }

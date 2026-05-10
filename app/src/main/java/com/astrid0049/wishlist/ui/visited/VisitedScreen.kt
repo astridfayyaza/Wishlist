@@ -1,5 +1,6 @@
 package com.astrid0049.wishlist.ui.visited
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,6 +49,8 @@ import com.astrid0049.wishlist.data.Place
 import com.astrid0049.wishlist.util.getCategoryLabelRes
 import com.astrid0049.wishlist.util.relativeDate
 import kotlinx.coroutines.launch
+import androidx.compose.ui.tooling.preview.Preview
+import com.astrid0049.wishlist.ui.theme.WishlistTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +62,32 @@ fun VisitedScreen(
     val places by viewModel.visitedPlaces.collectAsState(initial = emptyList())
     val coroutineScope = rememberCoroutineScope()
 
+    VisitedScreenContent(
+        places = places,
+        onBackClick = { navController.popBackStack() },
+        onRestorePlace = { placeId, restoredMessage ->
+            viewModel.restorePlace(placeId)
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(restoredMessage)
+            }
+        },
+        onDeletePlace = { place, deletedMessage ->
+            viewModel.deletePlace(place)
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(deletedMessage)
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VisitedScreenContent(
+    places: List<Place>,
+    onBackClick: () -> Unit,
+    onRestorePlace: (Int, String) -> Unit,
+    onDeletePlace: (Place, String) -> Unit
+) {
     var placeToDelete by remember { mutableStateOf<Place?>(null) }
 
     Scaffold(
@@ -73,9 +102,7 @@ fun VisitedScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            navController.popBackStack()
-                        }
+                        onClick = onBackClick
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -114,11 +141,7 @@ fun VisitedScreen(
                     VisitedCard(
                         place = place,
                         onRestore = {
-                            viewModel.restorePlace(place.id)
-
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(restoredMessage)
-                            }
+                            onRestorePlace(place.id, restoredMessage)
                         },
                         onDelete = {
                             placeToDelete = place
@@ -150,11 +173,7 @@ fun VisitedScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.deletePlace(currentPlaceToDelete)
-
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(deletedMessage)
-                        }
+                        onDeletePlace(currentPlaceToDelete, deletedMessage)
                         placeToDelete = null
                     }
                 ) {
@@ -287,5 +306,39 @@ private fun VisitedCard(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Composable
+fun VisitedScreenPreview() {
+    val now = System.currentTimeMillis()
+    WishlistTheme {
+        VisitedScreenContent(
+            places = listOf(
+                Place(
+                    id = 1,
+                    name = "Eiffel Tower",
+                    location = "Paris",
+                    category = "Culture",
+                    visitedAt = now - 86400000 * 10,
+                    dateAdded = now - 86400000 * 20,
+                    lastUpdated = now
+                ),
+                Place(
+                    id = 2,
+                    name = "Great Wall",
+                    location = "China",
+                    category = "Culture",
+                    visitedAt = now - 86400000 * 30,
+                    dateAdded = now - 86400000 * 40,
+                    lastUpdated = now
+                )
+            ),
+            onBackClick = {},
+            onRestorePlace = { _, _ -> },
+            onDeletePlace = { _, _ -> }
+        )
     }
 }
