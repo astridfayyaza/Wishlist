@@ -1,3 +1,93 @@
 <resources>
-    <string name="app_name">Wishlist</string>
+    <string name="app_name">Itsuka</string>
+
+    <!-- Wishlist -->
+    <string name="wishlist_title">Itsuka</string>
+    <string name="pin_a_place">Pin a place</string>
+    <string name="wishlist_empty_primary">No dreams yet.</string>
+    <string name="wishlist_empty_secondary">Where do you want to go first?</string>
+    <string name="menu_visited">Visited</string>
+    <string name="menu_about">About</string>
+    <string name="toggle_sort">Toggle sort</string>
+    <string name="show_grid">Grid</string>
+    <string name="show_list">List</string>
+
+    <!-- Detail -->
+    <string name="place_add_title">Pin a place</string>
+    <string name="place_edit_title">Edit place</string>
+    <string name="field_where">Where</string>
+    <string name="field_location">Location</string>
+    <string name="field_location_placeholder">e.g., Hokkaido, Japan</string>
+    <string name="field_category">Category</string>
+    <string name="field_notes">Notes</string>
+    <string name="field_notes_placeholder">Why this place? What do we want to do there?</string>
+    <string name="pin_it">Pin it</string>
+    <string name="save_changes">Save changes</string>
+    <string name="mark_visited">Mark visited</string>
+    <string name="delete">Delete</string>
+    <string name="keep_it">Keep it</string>
+
+    <!-- Validation -->
+    <string name="validation_name_empty">Even places need names</string>
+    <string name="validation_category_empty">Pick a vibe, don\'t be shy</string>
+    <string name="validation_toast">Please fill required fields</string>
+
+    <!-- Delete dialog -->
+    <string name="delete_place_title">Delete \'%1$s\'?</string>
+    <string name="delete_place_body">This is permanent. The place will be gone.</string>
+    <string name="delete_visited_body">Removing this from your library. No coming back.</string>
+
+    <!-- Visited -->
+    <string name="visited_title">Visited</string>
+    <string name="visited_subtitle">Places we made happen. ✨</string>
+    <string name="visited_empty_primary">Nowhere yet.</string>
+    <string name="visited_empty_secondary">Make a memory. Then come back.</string>
+    <string name="restore">Restore</string>
+    <string name="delete_forever">Delete forever</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_app_name" translatable="false">いつか</string>
+    <string name="about_divider" translatable="false">✦ ⋆ ✧</string>
+    <string name="about_body">Itsuka means someday — the place where every dream we postpone keeps waiting.\n\nThis is our list of someday places.</string>
+    <string name="about_subtitle">A wishlist for places we want to visit together.</string>
+
+    <!-- Snackbar -->
+    <string name="snackbar_saved">Saved. ✦</string>
+    <string name="snackbar_pinned">\'%1$s\' pinned. ✦</string>
+    <string name="snackbar_visited">\'%1$s\' visited. ✨</string>
+    <string name="snackbar_restored">\'%1$s\' is back on the wishlist.</string>
+    <string name="snackbar_deleted">\'%1$s\' deleted.</string>
+    <string name="undo">UNDO</string>
+
+    <!-- Pining labels -->
+    <string name="pine_days">%1$dd</string>
+    <string name="pine_new_crush">New crush</string>
+    <string name="pine_slow_burn">Slow burn</string>
+    <string name="pine_aching">Aching for it</string>
+    <string name="pine_cursed">Cursed to wait</string>
+
+    <!-- Categories -->
+    <string name="cat_food">Food</string>
+    <string name="cat_nature">Nature</string>
+    <string name="cat_city">City</string>
+    <string name="cat_culture">Culture</string>
+    <string name="cat_hidden_gem">Hidden Gem</string>
+
+    <!-- Dates -->
+    <string name="relative_today">Today</string>
+    <string name="relative_yesterday">Yesterday</string>
+    <string name="relative_days_ago">%1$d days ago</string>
+    <string name="relative_weeks_ago">%1$d weeks ago</string>
+    <string name="relative_months_ago">%1$d months ago</string>
+    <string name="relative_over_year">Over a year ago</string>
+    <string name="visited_relative">Visited %1$s</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Back</string>
+    <string name="cd_add_place">Add place</string>
+    <string name="cd_menu">Menu</string>
+
+    <!-- Formatting -->
+    <string name="dot_separator" translatable="false"> · </string>
 </resources>

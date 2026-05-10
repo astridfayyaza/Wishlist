@@ -1,0 +1,88 @@
+<resources>
+    <string name="app_name">Itsuka</string>
+
+    <!-- Wishlist -->
+    <string name="wishlist_title">Itsuka</string>
+    <string name="pin_a_place">Sematkan tempat</string>
+    <string name="wishlist_empty_primary">Belum ada impian.</string>
+    <string name="wishlist_empty_secondary">Mau ke mana dulu?</string>
+    <string name="menu_visited">Sudah Dikunjungi</string>
+    <string name="menu_about">Tentang</string>
+    <string name="toggle_sort">Ubah urutan</string>
+    <string name="show_grid">Grid</string>
+    <string name="show_list">Daftar</string>
+
+    <!-- Detail -->
+    <string name="place_add_title">Sematkan tempat</string>
+    <string name="place_edit_title">Ubah tempat</string>
+    <string name="field_where">Tempat</string>
+    <string name="field_location">Lokasi</string>
+    <string name="field_location_placeholder">mis., Hokkaido, Jepang</string>
+    <string name="field_category">Kategori</string>
+    <string name="field_notes">Catatan</string>
+    <string name="field_notes_placeholder">Kenapa tempat ini? Mau ngapain di sana?</string>
+    <string name="pin_it">Sematkan</string>
+    <string name="save_changes">Simpan perubahan</string>
+    <string name="mark_visited">Tandai dikunjungi</string>
+    <string name="delete">Hapus</string>
+    <string name="keep_it">Simpan saja</string>
+
+    <!-- Validation -->
+    <string name="validation_name_empty">Tempat juga butuh nama</string>
+    <string name="validation_category_empty">Pilih kategori, jangan malu</string>
+    <string name="validation_toast">Harap isi field yang wajib</string>
+
+    <!-- Delete dialog -->
+    <string name="delete_place_title">Hapus \'%1$s\'?</string>
+    <string name="delete_place_body">Ini permanen. Tempat ini akan hilang.</string>
+    <string name="delete_visited_body">Menghapus ini dari koleksi. Tidak ada jalan kembali.</string>
+
+    <!-- Visited -->
+    <string name="visited_title">Sudah Dikunjungi</string>
+    <string name="visited_subtitle">Tempat yang berhasil kami datangi. ✨</string>
+    <string name="visited_empty_primary">Belum ke mana pun.</string>
+    <string name="visited_empty_secondary">Buat kenangan. Lalu kembali.</string>
+    <string name="restore">Pulihkan</string>
+    <string name="delete_forever">Hapus permanen</string>
+
+    <!-- About -->
+    <string name="about_title">Tentang</string>
+    <string name="about_body">Itsuka berarti suatu hari nanti — tempat di mana setiap impian yang kita tunda tetap menunggu.\n\nIni daftar tempat suatu hari nanti milik kita.</string>
+    <string name="about_subtitle">Wishlist tempat yang ingin kita kunjungi bersama.</string>
+
+    <!-- Snackbar -->
+    <string name="snackbar_saved">Tersimpan. ✦</string>
+    <string name="snackbar_pinned">\'%1$s\' disematkan. ✦</string>
+    <string name="snackbar_visited">\'%1$s\' dikunjungi. ✨</string>
+    <string name="snackbar_restored">\'%1$s\' kembali ke daftar.</string>
+    <string name="snackbar_deleted">\'%1$s\' dihapus.</string>
+    <string name="undo">URUNG</string>
+
+    <!-- Pining labels -->
+    <string name="pine_days">%1$dh</string>
+    <string name="pine_new_crush">Baru naksir</string>
+    <string name="pine_slow_burn">Pelan tapi pasti</string>
+    <string name="pine_aching">Rindu berat</string>
+    <string name="pine_cursed">Terkutuk menunggu</string>
+
+    <!-- Categories -->
+    <string name="cat_food">Makanan</string>
+    <string name="cat_nature">Alam</string>
+    <string name="cat_city">Kota</string>
+    <string name="cat_culture">Budaya</string>
+    <string name="cat_hidden_gem">Tempat Tersembunyi</string>
+
+    <!-- Dates -->
+    <string name="relative_today">Hari ini</string>
+    <string name="relative_yesterday">Kemarin</string>
+    <string name="relative_days_ago">%1$d hari lalu</string>
+    <string name="relative_weeks_ago">%1$d minggu lalu</string>
+    <string name="relative_months_ago">%1$d bulan lalu</string>
+    <string name="relative_over_year">Lebih dari setahun lalu</string>
+    <string name="visited_relative">Dikunjungi %1$s</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Kembali</string>
+    <string name="cd_add_place">Tambah tempat</string>
+    <string name="cd_menu">Menu</string>
+</resources>

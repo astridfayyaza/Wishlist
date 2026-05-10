@@ -5,17 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -36,11 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.astrid0049.wishlist.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -48,7 +52,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun PlaceDetailScreen(
     navController: NavHostController,
-    id: Int? = null,
     snackbarHostState: SnackbarHostState,
     snackbarScope: CoroutineScope,
     viewModel: PlaceDetailViewModel = viewModel(factory = PlaceDetailViewModel.Factory)
@@ -59,28 +62,43 @@ fun PlaceDetailScreen(
     val category by viewModel.category.collectAsState()
     val notes by viewModel.notes.collectAsState()
     val isSaved by viewModel.isSaved.collectAsState()
+    val showErrors by viewModel.showErrors.collectAsState()
     val actionMessage by viewModel.actionMessage.collectAsState()
 
     var menuExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    val showDeleteDialog = remember { mutableStateOf(false) }
 
     val categories = listOf(
-        "Food",
-        "Nature",
-        "City",
-        "Culture",
-        "Hidden Gem"
+        "Food" to R.string.cat_food,
+        "Nature" to R.string.cat_nature,
+        "City" to R.string.cat_city,
+        "Culture" to R.string.cat_culture,
+        "Hidden Gem" to R.string.cat_hidden_gem
     )
+
+    val savedMsg = stringResource(R.string.snackbar_saved)
+    val pinnedMsg = stringResource(R.string.snackbar_pinned, name)
+    val visitedMsg = stringResource(R.string.snackbar_visited, name)
+    val deletedMsg = stringResource(R.string.snackbar_deleted, name)
+    val undoMsg = stringResource(R.string.undo)
+    val validationToastMsg = stringResource(R.string.validation_toast)
 
     LaunchedEffect(isSaved) {
         if (isSaved) {
             navController.popBackStack()
 
             snackbarScope.launch {
+                val message = when (actionMessage) {
+                    "saved" -> savedMsg
+                    "pinned" -> pinnedMsg
+                    "visited" -> visitedMsg
+                    "deleted" -> deletedMsg
+                    else -> actionMessage
+                }
                 val result = snackbarHostState.showSnackbar(
-                    message = actionMessage,
-                    actionLabel = if (actionMessage.contains("visited")) "UNDO" else null
+                    message = message,
+                    actionLabel = if (actionMessage == "visited") undoMsg else null
                 )
 
                 if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
@@ -95,7 +113,7 @@ fun PlaceDetailScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = if (viewModel.isEditMode) "Edit place" else "Pin a place",
+                        text = if (viewModel.isEditMode) stringResource(R.string.place_edit_title) else stringResource(R.string.place_add_title),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Bold
                     )
@@ -108,7 +126,7 @@ fun PlaceDetailScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.cd_back)
                         )
                     }
                 },
@@ -121,7 +139,7 @@ fun PlaceDetailScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
-                                contentDescription = "Menu"
+                                contentDescription = stringResource(R.string.cd_menu)
                             )
                         }
 
@@ -132,7 +150,7 @@ fun PlaceDetailScreen(
                             }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Mark visited") },
+                                text = { Text(stringResource(R.string.mark_visited)) },
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Place,
@@ -148,7 +166,7 @@ fun PlaceDetailScreen(
                             DropdownMenuItem(
                                 text = {
                                     Text(
-                                        text = "Delete",
+                                        text = stringResource(R.string.delete),
                                         color = MaterialTheme.colorScheme.error
                                     )
                                 },
@@ -161,7 +179,7 @@ fun PlaceDetailScreen(
                                 },
                                 onClick = {
                                     menuExpanded = false
-                                    showDeleteDialog = true
+                                    showDeleteDialog.value = true
                                 }
                             )
                         }
@@ -173,17 +191,18 @@ fun PlaceDetailScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
                 value = name,
                 onValueChange = viewModel::updateName,
-                label = { Text("Where") },
-                isError = name.isBlank(),
+                label = { Text(stringResource(R.string.field_where)) },
+                isError = showErrors && name.isBlank(),
                 supportingText = {
-                    if (name.isBlank()) {
-                        Text("Even places need names")
+                    if (showErrors && name.isBlank()) {
+                        Text(stringResource(R.string.validation_name_empty))
                     }
                 },
                 singleLine = true,
@@ -193,8 +212,8 @@ fun PlaceDetailScreen(
             OutlinedTextField(
                 value = location,
                 onValueChange = viewModel::updateLocation,
-                label = { Text("Location") },
-                placeholder = { Text("e.g., Kyoto, Japan") },
+                label = { Text(stringResource(R.string.field_location)) },
+                placeholder = { Text(stringResource(R.string.field_location_placeholder)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -209,11 +228,11 @@ fun PlaceDetailScreen(
                     value = category,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Category") },
-                    isError = category.isBlank(),
+                    label = { Text(stringResource(R.string.field_category)) },
+                    isError = showErrors && category.isBlank(),
                     supportingText = {
-                        if (category.isBlank()) {
-                            Text("Pick a vibe, don't be shy")
+                        if (showErrors && category.isBlank()) {
+                            Text(stringResource(R.string.validation_category_empty))
                         }
                     },
                     trailingIcon = {
@@ -222,7 +241,7 @@ fun PlaceDetailScreen(
                         )
                     },
                     modifier = Modifier
-                        .menuAnchor()
+                        .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                         .fillMaxWidth()
                 )
 
@@ -232,11 +251,11 @@ fun PlaceDetailScreen(
                         categoryExpanded = false
                     }
                 ) {
-                    categories.forEach { item ->
+                    categories.forEach { (value, labelRes) ->
                         DropdownMenuItem(
-                            text = { Text(item) },
+                            text = { Text(stringResource(labelRes)) },
                             onClick = {
-                                viewModel.updateCategory(item)
+                                viewModel.updateCategory(value)
                                 categoryExpanded = false
                             }
                         )
@@ -247,9 +266,9 @@ fun PlaceDetailScreen(
             OutlinedTextField(
                 value = notes,
                 onValueChange = viewModel::updateNotes,
-                label = { Text("Notes") },
+                label = { Text(stringResource(R.string.field_notes)) },
                 placeholder = {
-                    Text("Why this place? What do we want to do there?")
+                    Text(stringResource(R.string.field_notes_placeholder))
                 },
                 minLines = 4,
                 modifier = Modifier.fillMaxWidth()
@@ -257,28 +276,22 @@ fun PlaceDetailScreen(
 
             Button(
                 onClick = {
-                    if (viewModel.isInputValid()) {
-                        viewModel.save()
-                    } else {
+                    viewModel.save()
+                    if (!viewModel.isInputValid()) {
                         Toast.makeText(
                             context,
-                            "Please fill required fields",
+                            validationToastMsg,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = null
-                )
-
                 Text(
                     text = if (viewModel.isEditMode) {
-                        "Save changes"
+                        stringResource(R.string.save_changes)
                     } else {
-                        "Pin it"
+                        stringResource(R.string.pin_it)
                     },
                     modifier = Modifier.padding(start = 8.dp)
                 )
@@ -286,26 +299,26 @@ fun PlaceDetailScreen(
         }
     }
 
-    if (showDeleteDialog) {
+    if (showDeleteDialog.value) {
         AlertDialog(
             onDismissRequest = {
-                showDeleteDialog = false
+                showDeleteDialog.value = false
             },
             title = {
-                Text("Delete this place?")
+                Text(stringResource(R.string.delete_place_title, name))
             },
             text = {
-                Text("This is permanent. The place will be gone.")
+                Text(stringResource(R.string.delete_place_body))
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        showDeleteDialog = false
+                        showDeleteDialog.value = false
                         viewModel.deletePlace()
                     }
                 ) {
                     Text(
-                        text = "Delete",
+                        text = stringResource(R.string.delete),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -313,10 +326,10 @@ fun PlaceDetailScreen(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        showDeleteDialog = false
+                        showDeleteDialog.value = false
                     }
                 ) {
-                    Text("Keep it")
+                    Text(stringResource(R.string.keep_it))
                 }
             }
         )

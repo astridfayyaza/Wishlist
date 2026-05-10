@@ -42,7 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.compose.ui.res.stringResource
+import com.astrid0049.wishlist.R
 import com.astrid0049.wishlist.data.Place
+import com.astrid0049.wishlist.util.getCategoryLabelRes
 import com.astrid0049.wishlist.util.relativeDate
 import kotlinx.coroutines.launch
 
@@ -63,7 +66,7 @@ fun VisitedScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Visited",
+                        text = stringResource(R.string.visited_title),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Bold
                     )
@@ -76,7 +79,7 @@ fun VisitedScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.cd_back)
                         )
                     }
                 }
@@ -99,7 +102,7 @@ fun VisitedScreen(
             ) {
                 item {
                     Text(
-                        text = "Places we made happen. ✨",
+                        text = stringResource(R.string.visited_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         fontStyle = FontStyle.Italic,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -107,15 +110,14 @@ fun VisitedScreen(
                 }
 
                 items(places) { place ->
+                    val restoredMessage = stringResource(R.string.snackbar_restored, place.name)
                     VisitedCard(
                         place = place,
                         onRestore = {
                             viewModel.restorePlace(place.id)
 
                             coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    "'${place.name}' is back on the wishlist."
-                                )
+                                snackbarHostState.showSnackbar(restoredMessage)
                             }
                         },
                         onDelete = {
@@ -131,34 +133,33 @@ fun VisitedScreen(
         }
     }
 
-    if (placeToDelete != null) {
+    val currentPlaceToDelete = placeToDelete
+    if (currentPlaceToDelete != null) {
+        val deleteTitle = stringResource(R.string.delete_place_title, currentPlaceToDelete.name)
+        val deletedMessage = stringResource(R.string.snackbar_deleted, currentPlaceToDelete.name)
         AlertDialog(
             onDismissRequest = {
                 placeToDelete = null
             },
             title = {
-                Text("Delete '${placeToDelete?.name}'?")
+                Text(deleteTitle)
             },
             text = {
-                Text("Removing this from your library. No coming back.")
+                Text(stringResource(R.string.delete_visited_body))
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        placeToDelete?.let { place ->
-                            viewModel.deletePlace(place)
+                        viewModel.deletePlace(currentPlaceToDelete)
 
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    "'${place.name}' deleted."
-                                )
-                            }
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(deletedMessage)
                         }
                         placeToDelete = null
                     }
                 ) {
                     Text(
-                        text = "Delete",
+                        text = stringResource(R.string.delete),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -169,7 +170,7 @@ fun VisitedScreen(
                         placeToDelete = null
                     }
                 ) {
-                    Text("Keep it")
+                    Text(stringResource(R.string.keep_it))
                 }
             }
         )
@@ -192,13 +193,13 @@ private fun EmptyVisited(
         )
 
         Text(
-            text = "Nowhere yet.",
+            text = stringResource(R.string.visited_empty_primary),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
 
         Text(
-            text = "Make a memory. Then come back.",
+            text = stringResource(R.string.visited_empty_secondary),
             style = MaterialTheme.typography.bodyMedium
         )
     }
@@ -232,21 +233,31 @@ private fun VisitedCard(
                     fontWeight = FontWeight.Bold
                 )
 
-                val visitedText = place.visitedAt?.let {
-                    "Visited ${relativeDate(it)}"
-                } ?: "Visited"
+                val (resId, arg) = place.visitedAt?.let {
+                    relativeDate(it)
+                } ?: (R.string.mark_visited to null)
+
+                val visitedText = if (arg != null) {
+                    stringResource(resId, arg)
+                } else {
+                    stringResource(resId)
+                }
 
                 Text(
-                    text = visitedText,
+                    text = stringResource(R.string.visited_relative, visitedText),
                     style = MaterialTheme.typography.bodySmall
                 )
 
-                val subtitle = buildString {
-                    if (!place.location.isNullOrBlank()) {
-                        append(place.location)
-                        append(" · ")
+                val dot = stringResource(R.string.dot_separator)
+                val categoryLabel = stringResource(getCategoryLabelRes(place.category))
+                val subtitle = remember(place.location, categoryLabel, dot) {
+                    buildString {
+                        if (!place.location.isNullOrBlank()) {
+                            append(place.location)
+                            append(dot)
+                        }
+                        append(categoryLabel)
                     }
-                    append(place.category)
                 }
 
                 Text(
@@ -261,7 +272,7 @@ private fun VisitedCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Restore,
-                        contentDescription = "Restore"
+                        contentDescription = stringResource(R.string.restore)
                     )
                 }
 
@@ -270,7 +281,7 @@ private fun VisitedCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.DeleteForever,
-                        contentDescription = "Delete forever",
+                        contentDescription = stringResource(R.string.delete_forever),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }

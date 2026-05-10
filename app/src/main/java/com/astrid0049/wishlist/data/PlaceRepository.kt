@@ -73,34 +73,9 @@ class PlaceRepository(
         dao.hardDelete(place)
     }
 
-    suspend fun toggleSort(current: String) {
-        val newValue = if (current == "pining") "recent" else "pining"
-        preferences.setSortOrder(newValue)
-    }
 
     suspend fun toggleView(current: String) {
         val newValue = if (current == "list") "grid" else "list"
         preferences.setViewMode(newValue)
-    }
-
-    fun countActive(): Flow<Int> = dao.countActive()
-
-    fun countVisited(): Flow<Int> = dao.countVisited()
-
-    fun longestPining(): Flow<Place?> = dao.longestPining()
-
-    fun lastVisited(): Flow<Place?> = dao.lastVisited()
-
-    fun longestWait(): Flow<Place?> = dao.longestWait()
-
-    fun avgWaitMs(): Flow<Long> = dao.avgWaitMs()
-
-    fun categoryCounts(): Flow<List<CategoryCount>> = dao.categoryCounts()
-
-    fun pineDays(
-        place: Place,
-        now: Long = System.currentTimeMillis()
-    ): Int {
-        return ((now - place.dateAdded) / (1000L * 60 * 60 * 24)).toInt()
     }
 }

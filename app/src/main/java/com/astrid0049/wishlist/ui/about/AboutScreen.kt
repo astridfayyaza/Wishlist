@@ -4,9 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,11 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.astrid0049.wishlist.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +38,7 @@ fun AboutScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "About",
+                        text = stringResource(R.string.about_title),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Bold
                     )
@@ -48,7 +51,7 @@ fun AboutScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.cd_back)
                         )
                     }
                 }
@@ -59,19 +62,20 @@ fun AboutScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "いつか",
+                text = stringResource(R.string.about_app_name),
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
 
             Text(
-                text = "✦ ⋆ ✧",
+                text = stringResource(R.string.about_divider),
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
             )
@@ -82,7 +86,7 @@ fun AboutScreen(
                 )
             ) {
                 Text(
-                    text = "Itsuka means someday — the place where every dream we postpone keeps waiting.\n\nThis is our list of someday places.",
+                    text = stringResource(R.string.about_body),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(24.dp)
@@ -90,7 +94,7 @@ fun AboutScreen(
             }
 
             Text(
-                text = "A wishlist for places we want to visit together.",
+                text = stringResource(R.string.about_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 24.dp)

@@ -48,10 +48,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.compose.ui.res.stringResource
+import com.astrid0049.wishlist.R
 import com.astrid0049.wishlist.data.Place
 import com.astrid0049.wishlist.nav.Screen
+import com.astrid0049.wishlist.util.getCategoryLabelRes
 import com.astrid0049.wishlist.util.pineDays
-import com.astrid0049.wishlist.util.pineLabel
+import com.astrid0049.wishlist.util.pineLabelRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +63,6 @@ fun WishlistScreen(
     viewModel: WishlistViewModel = viewModel(factory = WishlistViewModel.Factory)
 ) {
     val places by viewModel.places.collectAsState(initial = emptyList())
-    val sortOrder by viewModel.sortOrder.collectAsState(initial = "pining")
     val viewMode by viewModel.viewMode.collectAsState(initial = "list")
 
     var menuExpanded by remember { mutableStateOf(false) }
@@ -70,7 +72,7 @@ fun WishlistScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Itsuka",
+                        text = stringResource(R.string.wishlist_title),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Bold
                     )
@@ -83,7 +85,7 @@ fun WishlistScreen(
                     ) {
                         Icon(
                             imageVector = if (viewMode == "list") Icons.Default.GridView else Icons.AutoMirrored.Filled.List,
-                            contentDescription = if (viewMode == "list") "Switch to grid view" else "Switch to list view"
+                            contentDescription = if (viewMode == "list") stringResource(R.string.show_grid) else stringResource(R.string.show_list)
                         )
                     }
 
@@ -94,7 +96,7 @@ fun WishlistScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Menu"
+                            contentDescription = stringResource(R.string.cd_menu)
                         )
                     }
 
@@ -105,7 +107,7 @@ fun WishlistScreen(
                         }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Visited") },
+                            text = { Text(stringResource(R.string.menu_visited)) },
                             onClick = {
                                 menuExpanded = false
                                 navController.navigate(Screen.Visited.route)
@@ -113,7 +115,7 @@ fun WishlistScreen(
                         )
 
                         DropdownMenuItem(
-                            text = { Text("About") },
+                            text = { Text(stringResource(R.string.menu_about)) },
                             onClick = {
                                 menuExpanded = false
                                 navController.navigate(Screen.About.route)
@@ -131,11 +133,11 @@ fun WishlistScreen(
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add place"
+                        contentDescription = stringResource(R.string.cd_add_place)
                     )
                 },
                 text = {
-                    Text("Pin a place")
+                    Text(stringResource(R.string.pin_a_place))
                 },
                 elevation = FloatingActionButtonDefaults.elevation()
             )
@@ -200,13 +202,13 @@ private fun EmptyWishlist(
         )
 
         Text(
-            text = "No dreams yet.",
+            text = stringResource(R.string.wishlist_empty_primary),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
 
         Text(
-            text = "Where do you want to go first?",
+            text = stringResource(R.string.wishlist_empty_secondary),
             style = MaterialTheme.typography.bodyMedium
         )
     }
@@ -243,12 +245,16 @@ private fun PlaceCard(
                     fontWeight = FontWeight.Bold
                 )
 
-                val subtitle = buildString {
-                    if (!place.location.isNullOrBlank()) {
-                        append(place.location)
-                        append(" · ")
+                val dot = stringResource(R.string.dot_separator)
+                val categoryLabel = stringResource(getCategoryLabelRes(place.category))
+                val subtitle = remember(place.location, categoryLabel, dot) {
+                    buildString {
+                        if (!place.location.isNullOrBlank()) {
+                            append(place.location)
+                            append(dot)
+                        }
+                        append(categoryLabel)
                     }
-                    append(place.category)
                 }
 
                 Text(
@@ -269,12 +275,12 @@ private fun PlaceCard(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "${days}d",
+                    text = stringResource(R.string.pine_days, days),
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = pineLabel(days),
+                    text = stringResource(pineLabelRes(days)),
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -327,7 +333,7 @@ private fun GridPlaceCard(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
-                text = "${days}d",
+                text = stringResource(R.string.pine_days, days),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelMedium
             )
@@ -347,7 +353,7 @@ private fun GridPlaceCard(
             }
 
             Text(
-                text = place.category,
+                text = stringResource(getCategoryLabelRes(place.category)),
                 style = MaterialTheme.typography.labelSmall
             )
 
@@ -360,7 +366,7 @@ private fun GridPlaceCard(
             }
 
             Text(
-                text = pineLabel(days),
+                text = stringResource(pineLabelRes(days)),
                 style = MaterialTheme.typography.labelSmall
             )
         }

@@ -2,6 +2,7 @@ package com.astrid0049.wishlist.nav
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,13 +17,15 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun SetupNavGraph(
-    navController: NavHostController = rememberNavController(),
     snackbarHostState: SnackbarHostState,
-    snackbarScope: CoroutineScope
+    snackbarScope: CoroutineScope,
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController()
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Wishlist.route
+        startDestination = Screen.Wishlist.route,
+        modifier = modifier
     ) {
         composable(route = Screen.Wishlist.route) {
             WishlistScreen(navController)
@@ -43,11 +46,9 @@ fun SetupNavGraph(
                     type = NavType.IntType
                 }
             )
-        ) { navBackStackEntry ->
-            val id = navBackStackEntry.arguments?.getInt(KEY_ID_PLACE)
+        ) {
             PlaceDetailScreen(
                 navController = navController,
-                id = id,
                 snackbarHostState = snackbarHostState,
                 snackbarScope = snackbarScope
             )

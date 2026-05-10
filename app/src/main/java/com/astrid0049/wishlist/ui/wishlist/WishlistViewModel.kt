@@ -15,15 +15,7 @@ class WishlistViewModel(
 ) : ViewModel() {
 
     val places = repository.activePlaces()
-    val sortOrder = repository.sortOrder
     val viewMode = repository.viewMode
-    val visitedCount = repository.countVisited()
-
-    fun toggleSort(current: String) {
-        viewModelScope.launch {
-            repository.toggleSort(current)
-        }
-    }
 
     fun toggleView(current: String) {
         viewModelScope.launch {

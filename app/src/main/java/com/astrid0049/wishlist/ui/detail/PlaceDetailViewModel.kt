@@ -27,7 +27,6 @@ class PlaceDetailViewModel(
     val isEditMode: Boolean = id != null
 
     private val _currentPlace = MutableStateFlow<Place?>(null)
-    val currentPlace: StateFlow<Place?> = _currentPlace
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -42,9 +41,11 @@ class PlaceDetailViewModel(
     val notes: StateFlow<String> = _notes
 
     private val _isSaved = MutableStateFlow(false)
+    private val _showErrors = MutableStateFlow(false)
     private val _actionMessage = MutableStateFlow("")
     val actionMessage: StateFlow<String> = _actionMessage
     val isSaved: StateFlow<Boolean> = _isSaved
+    val showErrors: StateFlow<Boolean> = _showErrors
 
     init {
         if (id != null) {
@@ -83,7 +84,10 @@ class PlaceDetailViewModel(
     }
 
     fun save() {
-        if (!isInputValid()) return
+        if (!isInputValid()) {
+            _showErrors.value = true
+            return
+        }
 
         viewModelScope.launch {
             if (isEditMode) {
@@ -106,12 +110,7 @@ class PlaceDetailViewModel(
                 )
             }
 
-            _actionMessage.value = if (isEditMode) {
-                "Saved. ✦"
-            } else {
-                "'${_name.value.trim()}' pinned. ✦"
-            }
-
+            _actionMessage.value = if (isEditMode) "saved" else "pinned"
             _isSaved.value = true
         }
     }
@@ -122,7 +121,7 @@ class PlaceDetailViewModel(
         viewModelScope.launch {
             repository.visit(placeId)
 
-            _actionMessage.value = "'${_name.value.trim()}' visited. ✨"
+            _actionMessage.value = "visited"
             _isSaved.value = true
         }
     }
@@ -133,17 +132,14 @@ class PlaceDetailViewModel(
         viewModelScope.launch {
             repository.hardDelete(place)
 
-            _actionMessage.value = "'${place.name}' deleted."
+            _actionMessage.value = "deleted"
             _isSaved.value = true
         }
     }
 
-    fun undoVisit() {
+    suspend fun undoVisit() {
         val placeId = id ?: return
-
-        viewModelScope.launch {
-            repository.unvisit(placeId)
-        }
+        repository.unvisit(placeId)
     }
 
     companion object {

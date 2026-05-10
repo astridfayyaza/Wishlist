@@ -23,7 +23,7 @@ abstract class PlaceDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     PlaceDatabase::class.java,
-                    "itsuka_database"
+                    "wishlist_database"
                 )
                     .fallbackToDestructiveMigration(false)
                     .build()
